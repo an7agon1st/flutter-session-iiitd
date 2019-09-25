@@ -1,111 +1,114 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 void main() => runApp(MyApp());
 
+//The main app is a stateless widget because we will be creating a stateful widget within the app to change the state of the widgets inside
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
       theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // Try running your application with "flutter run". You'll see the
-        // application has a blue toolbar. Then, without quitting the app, try
-        // changing the primarySwatch below to Colors.green and then invoke
-        // "hot reload" (press "r" in the console where you ran "flutter run",
-        // or simply save your changes to "hot reload" in a Flutter IDE).
-        // Notice that the counter didn't reset back to zero; the application
-        // is not restarted.
-        primarySwatch: Colors.blue,
-      ),
-      home: MyHomePage(title: 'Flutter Demo Home Page'),
+          primarySwatch: Colors.red,
+          // Sets the primary background color for the pages within the whole app,
+          //you can of course change it within the properties of individual Scaffolds
+          //by passing the named parameter color
+          scaffoldBackgroundColor: Colors.red[50]),
+      //the main page as the app opens
+      home: MyHomePage(),
     );
   }
 }
 
+//This is the stateful widget since we'll be changing data within here
 class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key, this.title}) : super(key: key);
-
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-
-  final String title;
+  MyHomePage();
 
   @override
   _MyHomePageState createState() => _MyHomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
+//Creating the Stream for giving out the time since epoch(January 1, 1970) in MicroSeconds
+Stream<int> getTheTime() {
+  Stream<int> theTime =
+      Stream<int>.periodic(Duration(microseconds: 1), (int x) {
+    return DateTime.now().microsecondsSinceEpoch;
+  });
+  // taking limited data from the stream
+  //
+  // theTime = theTime.take(100000);
+  return theTime;
+}
 
-  void _incrementCounter() {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
-    });
-  }
+class _MyHomePageState extends State<MyHomePage> {
+  // the variable tracks the value of the Cupertino Switch
+  bool buttonValue = false;
 
   @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
     return Scaffold(
       appBar: AppBar(
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
+        title: Text('Sample App'),
       ),
-      body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
-        child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Invoke "debug painting" (press "p" in the console, choose the
-          // "Toggle Debug Paint" action from the Flutter Inspector in Android
-          // Studio, or the "Toggle Debug Paint" command in Visual Studio Code)
-          // to see the wireframe for each widget.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.display1,
-            ),
-          ],
-        ),
+      body: Column(
+        // Where the widgets should be on the horizontal axis along the phone screen
+        crossAxisAlignment: CrossAxisAlignment.center,
+        // Where the widgets should be on the vertical axis along the phone screen.
+        // Space evenly, as the name suggests, Evenly spaces the widgets vertically
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: <Widget>[
+          Center(
+            // ternery operator to check for button value and display widget on screen accordingly
+            child: buttonValue
+                // if true
+                ? Text(
+                    'Data Stream Paused',
+                    style: TextStyle(fontSize: 26),
+                  )
+                //if false
+                //
+                // A Stream builder subscribes to a data stream and changes value on screen accordingly as the stream spits
+                : StreamBuilder<int>(
+                    stream: getTheTime(),
+                    builder: (context, snapshot) {
+                      // if for some reason the stream gives out no data
+                      if (!snapshot.hasData) return Text('Good luck debugging');
+                      // checking connection state with the Stream
+                      if (snapshot.connectionState == ConnectionState.waiting)
+                        return Text('Waiting Connection');
+                      // if the stream has finished
+                      if (snapshot.connectionState == ConnectionState.done)
+                        return Text('The stream has expired, lol');
+
+                      // display the stream onto the screen
+                      return Text(
+                        '${snapshot.data.toString()}',
+                        style: TextStyle(fontSize: 28),
+                      );
+                    },
+                  ),
+          ),
+          // we're using a cupertino style switch because, well, we can
+          CupertinoSwitch(
+            activeColor: Colors.red[100],
+            // tracks the button state according to the variable value
+            value: buttonValue,
+            //this function executes whenever the button is pressed.
+            onChanged: (value) {
+              // the set state notifies the widget tree that there has been a value change,
+              // this calls the build function and the whole widget tree is rebuilt
+              setState(() {
+                buttonValue = value;
+              });
+            },
+          )
+        ],
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
 }
+
+// TODO: Add drawer
+// TODO: Add navigation
+// TODO: Change individual text color
