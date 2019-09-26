@@ -1,5 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:sample_app/pages/delayed_response.dart';
+import 'package:sample_app/pages/proper_time.dart';
 
 void main() => runApp(MyApp());
 
@@ -47,7 +49,70 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
+    // the page behind the widgets that holds everything
     return Scaffold(
+      // the side drawer that can be puilled out from the left edge of the screen
+      drawer: Drawer(
+        child: Column(
+          children: <Widget>[
+            AppBar(
+              // appBars automatically add a leading icon for hamburgers and back buttons, we're asking it not to
+              automaticallyImplyLeading: false,
+              title: Text('Pages'),
+            ),
+            //we pad the list tile
+            Padding(
+              // we only need symmetrical padding along the vertical line
+              padding: const EdgeInsets.symmetric(vertical: 8.0),
+              // The list tile is a widget which can hold some text and is also tappable
+              child: ListTile(
+                // we will be navigating to other pages through here
+                title: Text('Proper Time'),
+                // the function is executed when the list time is tapped
+                onTap: () {
+                  // Pushed page on top of navigation stack
+                  Navigator.push(
+                    context,
+                    // we use the material page route since this is a material app
+                    // cupertino page routes can be dismissed from the stack by swiping right from the
+                    // left edge
+                    MaterialPageRoute(
+                      builder: (context) {
+                        // page ProperTime
+                        return ProperTime();
+                      },
+                    ),
+                  );
+                },
+              ),
+            ),
+            // ditto
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 8.0),
+              child: ListTile(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) {
+                        return DelayedResponse();
+                      },
+                    ),
+                  );
+                },
+                title: Text('Delayed Response'),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 8.0),
+              child: ListTile(
+                title: Text('Page 3'),
+                onTap: () {},
+              ),
+            ),
+          ],
+        ),
+      ),
       appBar: AppBar(
         title: Text('Sample App'),
       ),
