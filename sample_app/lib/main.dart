@@ -127,10 +127,8 @@ class _MyHomePageState extends State<MyHomePage> {
             // ternery operator to check for button value and display widget on screen accordingly
             child: buttonValue
                 // if true
-                ? Text(
-                    'Data Stream Paused',
-                    style: TextStyle(fontSize: 26),
-                  )
+                // image.asset accesses the asset imported at pubspec.yaml
+                ? Image.asset('cool_cat.jpg')
                 //if false
                 //
                 // A Stream builder subscribes to a data stream and changes value on screen accordingly as the stream spits
@@ -156,7 +154,7 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
           // we're using a cupertino style switch because, well, we can
           CupertinoSwitch(
-            activeColor: Colors.red[100],
+            activeColor: Colors.red[400],
             // tracks the button state according to the variable value
             value: buttonValue,
             //this function executes whenever the button is pressed.

@@ -26,7 +26,29 @@ from the project directory<br>
 ```flutter run```
 
 ---
-## Widget Tree
+## Widgets
+
+#### Stateless Widget
+
+These widgets are static
+
+#### Stateful Widget
+
+Widgets are dynamic and data can be updated using setState((){})
+
+---
+## State Management
+
+### setState
+
+### Scoped Models
+
+### Bloc
+
+### Provider
+
+### Vanilla
+
 
 
 ---
@@ -42,3 +64,4 @@ from the project directory<br>
 - [TheBoring Flutter Show](https://www.youtube.com/watch?v=yr8F2S3Amas&list=PLOU2XLYxmsIK0r_D-zWcmJ1plIcDNnRkK)
 - [Firebase backend Flutter](https://www.youtube.com/watch?v=DqJ_KjFzL9I)
 
+<!-- [Twitter](www.twitter.com/an7agon1st404) -->
